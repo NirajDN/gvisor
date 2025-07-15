@@ -546,21 +546,21 @@ func TestEvaluateImmediateVerdict(t *testing.T) {
 			if test.baseOp1 != nil {
 				rule1 := &Rule{}
 				rule1.addOperation(test.baseOp1)
-				if err := bc.RegisterRule(rule1, -1); err != nil {
+				if err := bc.RegisterRule(rule1, -1, 0); err != nil {
 					t.Fatalf("unexpected error for RegisterRule for the first operation: %v", err)
 				}
 			}
 			if test.baseOp2 != nil {
 				rule2 := &Rule{}
 				rule2.addOperation(test.baseOp2)
-				if err := bc.RegisterRule(rule2, -1); err != nil {
+				if err := bc.RegisterRule(rule2, -1, 0); err != nil {
 					t.Fatalf("unexpected error for RegisterRule for the second operation: %v", err)
 				}
 			}
 			if test.targetOp != nil {
 				ruleTarget := &Rule{}
 				ruleTarget.addOperation(test.targetOp)
-				if err := tc.RegisterRule(ruleTarget, -1); err != nil {
+				if err := tc.RegisterRule(ruleTarget, -1, 0); err != nil {
 					t.Fatalf("unexpected error for RegisterRule for the target operation: %v", err)
 				}
 			}
@@ -608,7 +608,7 @@ func TestEvaluateImmediateBytesData(t *testing.T) {
 					for reg := linux.NFT_REG32_00; reg <= linux.NFT_REG32_15; reg++ {
 						rule := &Rule{}
 						rule.addOperation(mustCreateImmediate(t, uint8(reg), newBytesData(bytes[:blen])))
-						if err := bc.RegisterRule(rule, -1); err != nil {
+						if err := bc.RegisterRule(rule, -1, 0); err != nil {
 							t.Fatalf("unexpected error for RegisterRule for rule %d: %v", reg-linux.NFT_REG32_00, err)
 						}
 					}
@@ -616,7 +616,7 @@ func TestEvaluateImmediateBytesData(t *testing.T) {
 					for reg := linux.NFT_REG_1; reg <= linux.NFT_REG_4; reg++ {
 						rule := &Rule{}
 						rule.addOperation(mustCreateImmediate(t, uint8(reg), newBytesData(bytes[:blen])))
-						if err := bc.RegisterRule(rule, -1); err != nil {
+						if err := bc.RegisterRule(rule, -1, 0); err != nil {
 							t.Fatalf("unexpected error for RegisterRule for rule %d: %v", reg-linux.NFT_REG_1, err)
 						}
 					}
@@ -1102,7 +1102,7 @@ func TestEvaluateComparison(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -1338,7 +1338,7 @@ func TestEvaluateRanged(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -1572,7 +1572,7 @@ func TestEvaluatePayloadLoad(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -2077,7 +2077,7 @@ func TestEvaluatePayloadSet(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -2264,7 +2264,7 @@ func TestEvaluateBitwise(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -2321,7 +2321,7 @@ func TestEvaluateCounter(t *testing.T) {
 		rule.addOperation(mustCreatePayloadLoad(t, linux.NFT_PAYLOAD_NETWORK_HEADER, ipv4SrcAddrOffset, ipv4SrcAddrLen, linux.NFT_REG_1))
 		rule.addOperation(mustCreateComparison(t, linux.NFT_REG_1, linux.NFT_CMP_EQ, desiredIpv4Address.AsSlice()))
 		rule.addOperation(counter)
-		if err := bc.RegisterRule(rule, -1); err != nil {
+		if err := bc.RegisterRule(rule, -1, 0); err != nil {
 			t.Fatalf("unexpected error for RegisterRule: %v", err)
 		}
 
@@ -2385,7 +2385,7 @@ func TestEvaluateLast(t *testing.T) {
 		// Registers a single rule with the last operation.
 		rule := &Rule{}
 		rule.addOperation(last)
-		if err := bc.RegisterRule(rule, -1); err != nil {
+		if err := bc.RegisterRule(rule, -1, 0); err != nil {
 			t.Fatalf("unexpected error for RegisterRule: %v", err)
 		}
 
@@ -2522,7 +2522,7 @@ func TestEvaluateRoute(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -2766,7 +2766,7 @@ func TestEvaluateByteorder(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -2945,7 +2945,7 @@ func TestEvaluateMetaLoad(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -3035,7 +3035,7 @@ func TestEvaluateMetaSet(t *testing.T) {
 			rule.addOperation(mustCreateImmediate(t, linux.NFT_REG_VERDICT, newVerdictData(stack.NFVerdict{Code: VC(linux.NF_DROP)})))
 
 			// Registers the rule to the base chain.
-			if err := bc.RegisterRule(rule, -1); err != nil {
+			if err := bc.RegisterRule(rule, -1, 0); err != nil {
 				t.Fatalf("unexpected error for RegisterRule: %v", err)
 			}
 
@@ -3490,7 +3490,7 @@ func TestLoopCheckOnRegisterAndUnregister(t *testing.T) {
 				}
 				for _, rule := range chainInit.rules {
 					// Note: this is where the loop checking is triggered.
-					if err := chain.RegisterRule(rule, -1); err != nil {
+					if err := chain.RegisterRule(rule, -1, 0); err != nil {
 						if !test.shouldErr {
 							t.Fatalf("unexpected error for RegisterRule: %v", err)
 						}
@@ -3608,7 +3608,7 @@ func TestMaxNestedJumps(t *testing.T) {
 				if err != nil {
 					t.Fatalf("unexpected error for AddOperation: %v", err)
 				}
-				if err := c.RegisterRule(r, -1); err != nil {
+				if err := c.RegisterRule(r, -1, 0); err != nil {
 					t.Fatalf("unexpected error for RegisterRule: %v", err)
 				}
 			}
